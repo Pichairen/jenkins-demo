@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ MACHINE_HOST }}"
+- hosts: "{{ SERVER_MACHINE }}"
   become: yes
   become_user: lihaiyu
   tasks:
@@ -9,7 +9,7 @@
     # 拷贝压缩包
     - name: copy jenkins-demo-assembly.tar.gz to dest host without backup # 目标文件与源文件不同 拷贝替换，这里设置不备份tar.gz文件
       copy:
-        src: "{{ WORKSPACE }}/Jenkins-demo/target/jenkins-demo-assembly.tar.gz"
+        src: "{{ WORKSPACE }}/target/jenkins-demo-assembly.tar.gz"
         dest: /home/lihaiyu
         backup: no
     # 解压并修改权限
@@ -23,7 +23,7 @@
     - name: restart service
       command:
         cmd: sh service.sh
-        chdir: /home/lihaiyu/jenkins-demo-assembly/bin
+        chdir: /home/lihaiyu/jenkins-demo/bin
 
 
 
