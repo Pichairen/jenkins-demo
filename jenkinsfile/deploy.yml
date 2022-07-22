@@ -1,0 +1,29 @@
+---
+- hosts: "{{ MACHINE_HOST }}"
+  become: yes
+  become_user: lihaiyu
+  tasks:
+    # ping
+    - name: ping dest host
+      ping:
+    # 拷贝压缩包
+    - name: copy jenkins-demo-assembly.tar.gz to dest host without backup # 目标文件与源文件不同 拷贝替换，这里设置不备份tar.gz文件
+      copy:
+        src: "{{ WORKSPACE }}/Jenkins-demo/target/jenkins-demo-assembly.tar.gz"
+        dest: /home/lihaiyu
+        backup: no
+    # 解压并修改权限
+    - name: umcompress tar.gz file # copy=no表示在目标主机上寻址解压包
+      unarchive:
+        src: /home/lihaiyu/jenkins-demo-assembly.tar.gz
+        dest: /home/lihaiyu/
+        copy: no
+        mode: 0755
+    # 重启服务
+    - name: restart service
+      command:
+        cmd: sh service.sh
+        chdir: /home/lihaiyu/jenkins-demo-assembly/bin
+
+
+

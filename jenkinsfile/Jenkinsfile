@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    environment{
+        GIT_URL="https://github.com/Pichairen/jenkins-demo.git"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                script{
+                    cleanWs()
+                    git branch: "${BRANCH_NAME}", credentialsId: 'lihaiyu-github-key', url: "${GIT_URL}"
+                }
+            }
+        }
+        stage("Maven Build"){
+            steps{
+                script{
+                    sh "mvn clean package -Dmaven.test.skip=true"
+                }
+            }
+        }
+
+        stage("Deploy"){
+            steps{
+                script{
+                    echo "Deploy>>>>>>"
+                    sh "ansible-playbook ${WORKSPACE}/ansible-playbook/deploy.yml -e 'SERVER_MACHINE=${SERVER_MACHINE} WORKSPACE=${WORKSPACE}'"
+                }
+            }
+        }
+    }
+}
